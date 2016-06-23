@@ -1,197 +1,194 @@
 package me.dags.installer;
 
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import javafx.util.Pair;
+import me.dags.installer.task.ForgeInstall;
+import me.dags.installer.task.ModpackInstall;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+/**
+ * @author dags <dags@dags.me>
+ */
+public class InstallerPanel extends JPanel {
 
-public class InstallerPanel extends JPanel
-{
-    private static final long serialVersionUID = 447602866903348986L;
+    /**
+     * ----------------------------------------------------
+     * | Forge: [forge-version v] [[launch installer]]    |
+     * |         (x) install   ( )  extract               |
+     * | [path/to/installation/directory] [[select dir]]  |
+     * |           [[install]]  [[close]]                 |
+     * ----------------------------------------------------
+     */
 
-    private final JTextField path = new JTextField();
-    private final JRadioButton install = new JRadioButton();
-    private final JRadioButton extract = new JRadioButton();
     private final JComboBox<String> forgeVersions = new JComboBox<>();
-    private final JButton ok = new JButton();
-    private final JButton close = new JButton();
+    private final JButton forgeInstall = new JButton("Forge Installer");
+    private final JTextField targetDir = new JTextField();
+    private final JButton targetSelect = new JButton("Select Directory");
+    private final JRadioButton install = new JRadioButton("Install");
+    private final JRadioButton extract = new JRadioButton("Extract");
+    private final JButton run = new JButton("Run");
+    private final JButton close = new JButton("Close");
 
-    private final Versions versions = new Versions();
-    private File targetDir = new File("");
+    public File installDir = new File("");
 
-    public InstallerPanel()
-    {
-        this.targetDir = new File(Installer.properties().mcDir, Installer.properties().target_dir);
-
+    public InstallerPanel() {
         final int windowWidth = 600;
         final int buttonWidth = 75;
-        final int chooseWidth = 80;
-        final int panelHeight = 30;
+        final int rowHeight = 23;
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setVisible(true);
+        this.installDir = new File(Installer.properties().mcDir, "profiles");
 
-        try
-        {
+        try {
             BufferedImage image = ImageIO.read(this.getClass().getResource("/installer-banner.jpg"));
             JLabel icon = new JLabel(new ImageIcon(image));
             JPanel banner = new JPanel();
             banner.setPreferredSize(new Dimension(windowWidth, 320));
             banner.add(icon);
             this.add(banner);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        forgeVersions.setPreferredSize(new Dimension(windowWidth - (buttonWidth * 2), rowHeight));
+        forgeVersions.setToolTipText("Select a Forge installation to extend");
+        forgeInstall.setPreferredSize(new Dimension((buttonWidth * 2), rowHeight));
+        forgeInstall.setToolTipText("Download and launch the recommended Forge installer");
+        forgeInstall.addActionListener(e -> new Thread(new ForgeInstall(this)).start());
 
-        JLabel versionsLabel = new JLabel();
-        versionsLabel.setText("Forge Versions:");
-        versionsLabel.setPreferredSize(new Dimension(chooseWidth, panelHeight));
+        targetDir.setPreferredSize(new Dimension(windowWidth - (buttonWidth * 2), rowHeight));
+        targetDir.setText(installDir.getAbsolutePath());
+        targetSelect.setPreferredSize(new Dimension((buttonWidth * 2), rowHeight));
+        targetSelect.setToolTipText("Select where to install/extract the modpack files to");
+        targetSelect.addActionListener(fileSelection());
 
-        forgeVersions.setPreferredSize(new Dimension(windowWidth - chooseWidth * 2, panelHeight));
-        if (versions.empty())
-        {
-            forgeVersions.setEnabled(false);
-            forgeVersions.addItem("No forge installs detected for mc version " + Installer.properties().minecraft_version + "!");
-        }
-        else
-        {
-            versions.getVersions().forEach(forgeVersions::addItem);
-        }
-
-        JPanel versionsContainer = new JPanel();
-        versionsContainer.setPreferredSize(new Dimension(windowWidth, panelHeight + 10));
-        versionsContainer.add(versionsLabel);
-        versionsContainer.add(forgeVersions);
-        this.add(versionsContainer);
-
-        path.setPreferredSize(new Dimension(windowWidth - chooseWidth * 2, panelHeight));
-        path.setText(this.targetDir.getAbsolutePath());
-        this.add(path);
-
-        JButton choose = new JButton();
-        choose.setText("Choose");
-        choose.addActionListener(this.fileExplorer(path));
-        choose.setPreferredSize(new Dimension(chooseWidth, panelHeight));
-
-        JPanel filesPane = new JPanel();
-        filesPane.setMinimumSize(new Dimension(windowWidth, panelHeight));
-        filesPane.add(path);
-        filesPane.add(choose);
-
-        install.setName("install");
-        install.setText("Install");
-        install.setToolTipText("Downloads & installs a new launcher profile for the modpack");
         install.setSelected(true);
-
-        extract.setName("extract");
-        extract.setText("Extract");
-        extract.setToolTipText("Downloads & extracts the modpack files to the selected folder");
+        install.addActionListener(radioInverter(install, extract));
+        install.setToolTipText("Extract the modpack to the target directory and add a new profile to the Vanilla launcher");
         extract.setSelected(false);
+        extract.addActionListener(radioInverter(extract, install));
+        extract.setToolTipText("Extract the modpack to the target directory");
 
-        JPanel installOptionsPane = new JPanel();
-        installOptionsPane.setMinimumSize(new Dimension(windowWidth, 25));
-        installOptionsPane.add(install);
-        installOptionsPane.add(extract);
+        run.setPreferredSize(new Dimension(buttonWidth, rowHeight));
+        run.setEnabled(false);
+        run.addActionListener(e -> new Thread(new ModpackInstall(this)).start());
+        close.setPreferredSize(new Dimension(buttonWidth, rowHeight));
+        close.addActionListener(e -> System.exit(0));
 
-        install.addActionListener(this.toggleRadio(install, extract));
-        extract.addActionListener(this.toggleRadio(extract, install));
+        this.add(toRow(forgeVersions, forgeInstall));
+        this.add(toRow(targetDir, targetSelect));
+        this.add(toRow(install, extract, run, close));
 
-        JPanel spacer = new JPanel();
-        spacer.setPreferredSize(new Dimension(25, panelHeight));
-
-        ok.setName("ok");
-        ok.setText("Ok");
-        ok.setPreferredSize(new Dimension(buttonWidth, panelHeight));
-        ok.addActionListener(this.install());
-        ok.setEnabled(forgeVersions.isEnabled());
-
-        close.setName("close");
-        close.setText("Close");
-        close.setPreferredSize(new Dimension(buttonWidth, panelHeight));
-        close.addActionListener(cancel());
-
-        installOptionsPane.add(spacer);
-        installOptionsPane.add(ok);
-        installOptionsPane.add(close);
-
-        this.add(filesPane);
-        this.add(installOptionsPane);
+        updateVersions();
+        updateInstallMode();
     }
 
-    private ActionListener fileExplorer(JTextField pathField)
-    {
+    public boolean installProfile() {
+        return install.isEnabled() && install.isSelected() && !extendProfile().isEmpty();
+    }
+
+    public String extendProfile() {
+        return forgeVersions.getSelectedItem().toString();
+    }
+
+    private void updateInstallMode() {
+        if (install.isEnabled() && install.isSelected()) {
+            run.setEnabled(forgeVersions.isEnabled());
+        }
+        if (extract.isEnabled() && extract.isSelected()) {
+            run.setEnabled(true);
+        }
+    }
+
+    public void updateVersions() {
+        forgeVersions.removeAllItems();
+        Collection<String> versions = new Versions().getVersions();
+        if (versions.isEmpty()) {
+            forgeInstall.setEnabled(true);
+            forgeVersions.setEnabled(false);
+            forgeVersions.addItem("No Forge installation detected - you can use this button to install it  -->");
+        } else {
+            forgeVersions.setEnabled(true);
+            forgeInstall.setEnabled(false);
+            versions.forEach(forgeVersions::addItem);
+        }
+        updateInstallMode();
+    }
+
+    public void lock() {
+        forgeVersions.setEnabled(false);
+        targetSelect.setEnabled(false);
+        install.setEnabled(false);
+        extract.setEnabled(false);
+        run.setEnabled(false);
+    }
+
+    public void unlock() {
+        targetSelect.setEnabled(true);
+        install.setEnabled(true);
+        extract.setEnabled(true);
+        updateVersions();
+    }
+
+    public Pair<JFrame, JProgressBar> progressBar() {
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setPreferredSize(new Dimension(350, 30));
+
+        JFrame frame = new JFrame();
+        frame.setLayout(new GridBagLayout());
+        frame.add(progressBar);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        return new Pair<>(frame, progressBar);
+    }
+
+    private ActionListener radioInverter(JRadioButton target, JRadioButton other) {
         return e -> {
-            if (!path.getText().equals(targetDir.getAbsolutePath()))
-            {
-                targetDir = new File(path.getText());
+            other.setSelected(!target.isSelected());
+            updateInstallMode();
+        };
+    }
+
+    private ActionListener fileSelection() {
+        return e -> {
+            if (!targetDir.getText().equals(installDir.getAbsolutePath())) {
+                installDir = new File(targetDir.getText());
             }
 
-            if (!targetDir.exists() && targetDir.mkdirs()) ;
+            if (!installDir.exists() && installDir.mkdirs()) ;
+
             JFileChooser dirChooser = new JFileChooser();
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirChooser.setFileHidingEnabled(false);
-            dirChooser.ensureFileIsVisible(targetDir);
-            dirChooser.setSelectedFile(targetDir);
+            dirChooser.ensureFileIsVisible(installDir);
+            dirChooser.setSelectedFile(installDir);
 
             int response = dirChooser.showOpenDialog(InstallerPanel.this);
-            if (response == JFileChooser.APPROVE_OPTION)
-            {
-                targetDir = dirChooser.getSelectedFile();
-                pathField.setText(targetDir.getAbsolutePath());
-                Installer.phase("settings").log("Set installation dir to {}", targetDir);
+
+            if (response == JFileChooser.APPROVE_OPTION) {
+                installDir = dirChooser.getSelectedFile();
+                targetDir.setText(installDir.getAbsolutePath());
+                Installer.phase("settings").log("Set installation dir to {}", installDir);
             }
         };
     }
 
-    private ActionListener toggleRadio(JRadioButton active, JRadioButton other)
-    {
-        return arg0 -> {
-            active.setSelected(true);
-            other.setSelected(false);
-            ok.setEnabled(forgeVersions.isEnabled() || active.getName().equals("extract"));
-            ok.setText("Ok");
-        };
-    }
-
-    private ActionListener install()
-    {
-        return arg0 -> {
-            if (!path.getText().equals(targetDir.getAbsolutePath()))
-            {
-                targetDir = new File(path.getText());
-            }
-
-            JFrame frame = new JFrame();
-            String forgeVersion = extract.isSelected() ? "" : forgeVersions.getSelectedItem().toString();
-            InstallProcess install = new InstallProcess(frame, ok, targetDir, forgeVersion);
-            frame.setLayout(new GridBagLayout());
-            frame.add(install);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-            install.perform();
-        };
-    }
-
-    private ActionListener cancel()
-    {
-        return arg0 -> System.exit(0);
+    private JPanel toRow(Component... component) {
+        JPanel row = new JPanel();
+        for (Component c : component) {
+            row.add(c);
+        }
+        return row;
     }
 }

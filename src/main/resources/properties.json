@@ -1,9 +1,11 @@
 {
-  "profile_name": "my_sweet_modpack",
+  "title": "ArdaCraft Installer",
+  "profile_name": "ACModpack",
   "target_dir": "profiles",
-  "minecraft_version": "1.8.8",
+  "minecraft_version": "1.8.9",
   "github": {
-    "repository": "dags-/TestModpack",
+    "user": "ArdaCraft",
+    "repo": "modpack",
     "api" : "https://api.github.com"
   }
 }

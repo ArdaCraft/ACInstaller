@@ -4,6 +4,7 @@ import java.io.File;
 
 public class Properties
 {
+    public String title = "";
     public String profile_name = "";
     public String target_dir = "";
     public String minecraft_version = "";
@@ -18,7 +19,7 @@ public class Properties
 
     public String getTagsQuery()
     {
-        return trim(github.api, "/") + "/repos/" + trim(github.repository, "/") + "/tags";
+        return trim(github.api, "/") + "/repos/" + trim(github.repo, "/") + "/tags";
     }
 
     @Override
@@ -37,12 +38,13 @@ public class Properties
     public static class GithubProperties
     {
         public String api = "https://api.github.com/";
-        public String repository = "dags-/ArdaCraftBlocks";
+        public String user = "dags-";
+        public String repo = "CommandBus";
 
         @Override
         public String toString()
         {
-            return "api='" + api + "',repository='" + repository + "'";
+            return "api='" + api + "',repository='" + repo + "'";
         }
     }
 }
