@@ -17,7 +17,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * @author dags <dags@dags.me>
  */
-public class DownloadProcess extends IOProgress {
+public class DownloadProcess extends IOProcess {
 
     private final Path outputPath;
     private final URL url;
@@ -34,7 +34,7 @@ public class DownloadProcess extends IOProgress {
     }
 
     @Override
-    protected IOProcess process() {
+    protected IOTask process() {
         return new DownloadTask();
     }
 
@@ -42,7 +42,7 @@ public class DownloadProcess extends IOProgress {
         return new Builder();
     }
 
-    private class DownloadTask implements IOProcess {
+    private class DownloadTask implements IOTask {
 
         private Path temp;
         private HttpURLConnection connection;
@@ -107,7 +107,7 @@ public class DownloadProcess extends IOProgress {
         }
     }
 
-    public static class Builder extends IOProgress.Builder<DownloadProcess> {
+    public static class Builder extends IOProcess.Builder<DownloadProcess> {
 
         private URL url = null;
         private Path outputPath = null;

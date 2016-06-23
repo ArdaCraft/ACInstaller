@@ -17,7 +17,7 @@ import java.util.zip.ZipFile;
 /**
  * @author dags <dags@dags.me>
  */
-public class UnzipProcess extends IOProgress {
+public class UnzipProcess extends IOProcess {
 
     private final Path zipPath;
     private final Path rootDir;
@@ -35,7 +35,7 @@ public class UnzipProcess extends IOProgress {
     }
 
     @Override
-    protected IOProcess process() {
+    protected IOTask process() {
         return new UnzipTask();
     }
 
@@ -43,7 +43,7 @@ public class UnzipProcess extends IOProgress {
         return new Builder();
     }
 
-    public class UnzipTask implements IOProcess {
+    public class UnzipTask implements IOTask {
 
         private ZipFile zipFile = null;
 
@@ -94,7 +94,7 @@ public class UnzipProcess extends IOProgress {
         }
     }
 
-    public static class Builder extends IOProgress.Builder<UnzipProcess> {
+    public static class Builder extends IOProcess.Builder<UnzipProcess> {
 
         private Path zipPath;
         private Path rootPath;
