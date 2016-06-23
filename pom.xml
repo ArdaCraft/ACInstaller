@@ -25,7 +25,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>me.dags.installer.Launch</mainClass>
+							<mainClass>me.dags.installer.Launcher</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
