@@ -6,7 +6,9 @@ import me.dags.installer.InstallerPanel;
 import me.dags.installer.process.DownloadProcess;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 
 /**
@@ -48,13 +50,14 @@ public class ForgeInstall implements Runnable {
         new Thread(downloadProcess).run();
     }
 
-    public void launch(Path path) {
+    private void launch(Path path) {
         frame.dispose();
-
         try {
-            Process process = Runtime.getRuntime().exec("java -jar " + path);
-            while (process.isAlive()) {}
-        } catch (IOException e) {
+            Process process = Runtime.getRuntime().exec("java -jar " + path.toString());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while (reader.readLine() != null) {}
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         installerPanel.unlock();

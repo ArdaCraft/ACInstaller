@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Path;
@@ -29,7 +28,6 @@ public class ForgeFetcher {
     public ForgeFetcher(String mc_version, String release_stream) {
         this.mc_version = mc_version;
         this.release_lookup = mc_version + "-" + release_stream;
-        System.out.println(release_lookup);
     }
 
     public String url() {
@@ -55,16 +53,6 @@ public class ForgeFetcher {
             this.url = download;
             this.path = out;
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void launch(Path path) {
-        try {
-            Process process = Runtime.getRuntime().exec("java -jar " + path);
-            while (process.isAlive()) {}
-            System.out.println("Process closed!");
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

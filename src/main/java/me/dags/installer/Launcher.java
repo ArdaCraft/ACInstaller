@@ -15,6 +15,7 @@ import java.util.Locale;
 public class Launcher {
 
     public static void main(String[] args) {
+
         InputStream inputStream = Launcher.class.getResourceAsStream("/properties.json");
         Properties properties = new Gson().fromJson(new InputStreamReader(inputStream), Properties.class);
         Installer.applyProperties(properties);
