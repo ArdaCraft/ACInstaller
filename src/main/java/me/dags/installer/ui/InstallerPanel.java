@@ -30,7 +30,7 @@ public class InstallerPanel extends JPanel {
     public File installDir = new File("");
 
     public InstallerPanel() {
-        final int windowWidth = 500;
+        final int windowWidth = 550;
         final int buttonWidth = 75;
         final int rowHeight = 23;
 
@@ -38,12 +38,15 @@ public class InstallerPanel extends JPanel {
         this.installDir = new File(Installer.properties().mcDir, "profiles");
 
         try {
-            ImageResource background = new ImageResource("/installer-banner.png");
-            ParallaxImage banner = new ParallaxImage(background, 0.15D);
-            banner.setPreferredSize(new Dimension(windowWidth, 260));
+            ImageLayer background = new ImageLayer("/installer-banner.png", 0.1).scale(1.05).setCover(true);
+            ImageLayer icon = new ImageLayer("/installer-icon.png", 0.15).scale(0.7).margins(-40, 0);
+            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.175).scale(0.6).margins(40, 20);
 
-            ImageResource overlay = new ImageResource("/installer-logo.png").scale(0.5);
-            banner.setOverlay(overlay, -1, -1, overlay.getWidth(), overlay.getHeight());
+            ParallaxLayers banner = new ParallaxLayers();
+            banner.setPreferredSize(new Dimension(windowWidth, 260));
+            banner.addLayer(background);
+            banner.addLayer(icon);
+            banner.addLayer(logo);
 
             this.add(banner);
         } catch (IOException e) {

@@ -1,7 +1,7 @@
 package me.dags.installer;
 
 import com.google.gson.Gson;
-import me.dags.installer.ui.ImageResource;
+import me.dags.installer.ui.ImageLayer;
 import me.dags.installer.ui.InstallerPanel;
 
 import javax.swing.*;
@@ -43,7 +43,7 @@ public class Launcher {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             JFrame frame = new JFrame();
-            frame.setIconImage(new ImageResource("/installer-icon.png").resize(64, 64));
+            frame.setIconImage(new ImageLayer("/installer-icon.png").resize(64, 64));
             frame.setTitle(properties.title);
             frame.setLayout(new GridBagLayout());
             frame.add(new InstallerPanel());
