@@ -47,9 +47,9 @@ public class Launcher {
             frame.setTitle(properties.title);
             frame.setLayout(new GridBagLayout());
             frame.add(new InstallerPanel());
-            frame.setLocationRelativeTo(null);
             frame.setResizable(false);
             frame.pack();
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         } catch (Throwable e) {
