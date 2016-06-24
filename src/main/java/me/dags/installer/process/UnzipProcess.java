@@ -55,7 +55,7 @@ public class UnzipProcess extends IOProcess {
             int value = 0;
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
-                UnzipProcess.super.updateValue(value++);
+                UnzipProcess.super.updateValue(++value);
 
                 ZipEntry e = entries.nextElement();
                 if (e.isDirectory() || e.getName().startsWith(".") || e.getName().endsWith(".gitnore")) {

@@ -1,7 +1,9 @@
 package me.dags.installer;
 
 import com.google.gson.Gson;
+import me.dags.installer.component.ImageResource;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -41,12 +43,13 @@ public class Launcher {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             JFrame frame = new JFrame();
+            frame.setIconImage(new ImageResource("/installer-icon.png").resize(64, 64));
             frame.setTitle(properties.title);
             frame.setLayout(new GridBagLayout());
             frame.add(new InstallerPanel());
-            frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setResizable(false);
+            frame.pack();
             frame.setVisible(true);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         } catch (Throwable e) {

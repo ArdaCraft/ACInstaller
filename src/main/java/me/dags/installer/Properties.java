@@ -2,8 +2,8 @@ package me.dags.installer;
 
 import java.io.File;
 
-public class Properties
-{
+public class Properties {
+
     public String title = "";
     public String profile_name = "";
     public String target_dir = "";
@@ -12,38 +12,32 @@ public class Properties
 
     public transient File mcDir = new File("");
 
-    public String getRateLimitQuery()
-    {
+    public String getRateLimitQuery() {
         return trim(github.api, "/") + "/" + "rate_limit";
     }
 
-    public String getTagsQuery()
-    {
+    public String getTagsQuery() {
         return trim(github.api, "/") + "/repos/" + trim(github.repo, "/") + "/tags";
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "profile='" + profile_name + "',target_dir='" + target_dir + "',github={" + github.toString() + "}";
     }
 
-    private static String trim(String in, String s)
-    {
+    private static String trim(String in, String s) {
         in = in.startsWith(s) ? in.substring(1) : in;
         in = in.endsWith(s) ? in.substring(0, in.length() - 1) : in;
         return in;
     }
 
-    public static class GithubProperties
-    {
+    public static class GithubProperties {
         public String api = "https://api.github.com/";
         public String user = "dags-";
         public String repo = "CommandBus";
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "api='" + api + "',repository='" + repo + "'";
         }
     }

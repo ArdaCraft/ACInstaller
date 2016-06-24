@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public class Installer {
+
     private static final Installer instance = new Installer();
 
     private final Logger logger = Logger.getLogger("Installer");

@@ -1,6 +1,8 @@
 package me.dags.installer;
 
 import javafx.util.Pair;
+import me.dags.installer.component.ImageResource;
+import me.dags.installer.component.ParallaxImage;
 import me.dags.installer.task.ForgeInstall;
 import me.dags.installer.task.ModpackInstall;
 
@@ -18,15 +20,6 @@ import java.util.Collection;
  */
 public class InstallerPanel extends JPanel {
 
-    /**
-     * ----------------------------------------------------
-     * | Forge: [forge-version v] [[launch installer]]    |
-     * |         (x) install   ( )  extract               |
-     * | [path/to/installation/directory] [[select dir]]  |
-     * |           [[install]]  [[close]]                 |
-     * ----------------------------------------------------
-     */
-
     private final JComboBox<String> forgeVersions = new JComboBox<>();
     private final JButton forgeInstall = new JButton("Forge Installer");
     private final JTextField targetDir = new JTextField();
@@ -39,7 +32,7 @@ public class InstallerPanel extends JPanel {
     public File installDir = new File("");
 
     public InstallerPanel() {
-        final int windowWidth = 600;
+        final int windowWidth = 500;
         final int buttonWidth = 75;
         final int rowHeight = 23;
 
@@ -47,11 +40,13 @@ public class InstallerPanel extends JPanel {
         this.installDir = new File(Installer.properties().mcDir, "profiles");
 
         try {
-            BufferedImage image = ImageIO.read(this.getClass().getResource("/installer-banner.jpg"));
-            JLabel icon = new JLabel(new ImageIcon(image));
-            JPanel banner = new JPanel();
-            banner.setPreferredSize(new Dimension(windowWidth, 320));
-            banner.add(icon);
+            ImageResource background = new ImageResource("/installer-banner.png");
+            ParallaxImage banner = new ParallaxImage(background, 0.15D);
+            banner.setPreferredSize(new Dimension(windowWidth, 260));
+
+            ImageResource overlay = new ImageResource("/installer-logo.png").scale(0.5);
+            banner.setOverlay(overlay, -1, -1, overlay.getWidth(), overlay.getHeight());
+
             this.add(banner);
         } catch (IOException e) {
             e.printStackTrace();
@@ -113,7 +108,7 @@ public class InstallerPanel extends JPanel {
         if (versions.isEmpty()) {
             forgeInstall.setEnabled(true);
             forgeVersions.setEnabled(false);
-            forgeVersions.addItem("No Forge installation detected - you can use this button to install it  -->");
+            forgeVersions.addItem("No Forge installation detected");
         } else {
             forgeVersions.setEnabled(true);
             forgeInstall.setEnabled(false);
@@ -148,7 +143,6 @@ public class InstallerPanel extends JPanel {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         return new Pair<>(frame, progressBar);
     }
