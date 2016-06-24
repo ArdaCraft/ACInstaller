@@ -1,4 +1,4 @@
-package me.dags.installer.component;
+package me.dags.installer.ui;
 
 import javax.swing.*;
 import java.awt.*;

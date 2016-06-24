@@ -1,16 +1,14 @@
-package me.dags.installer;
+package me.dags.installer.ui;
 
 import javafx.util.Pair;
-import me.dags.installer.component.ImageResource;
-import me.dags.installer.component.ParallaxImage;
+import me.dags.installer.Installer;
+import me.dags.installer.Versions;
 import me.dags.installer.task.ForgeInstall;
 import me.dags.installer.task.ModpackInstall;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;

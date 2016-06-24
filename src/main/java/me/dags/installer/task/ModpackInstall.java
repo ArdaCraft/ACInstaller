@@ -2,9 +2,9 @@ package me.dags.installer.task;
 
 import javafx.util.Pair;
 import me.dags.installer.Installer;
-import me.dags.installer.InstallerPanel;
 import me.dags.installer.process.DownloadProcess;
 import me.dags.installer.process.UnzipProcess;
+import me.dags.installer.ui.InstallerPanel;
 
 import javax.swing.*;
 import java.io.IOException;

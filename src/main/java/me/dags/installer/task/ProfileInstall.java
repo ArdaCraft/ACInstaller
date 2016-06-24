@@ -42,7 +42,7 @@ public class ProfileInstall implements Runnable {
             profiles.get("profiles").getAsJsonObject().add(Installer.properties().profile_name, profile);
             in.close();
 
-            Installer.phase("profle write").log("Writing profiles to disk...");
+            Installer.phase("profile write").log("Writing profiles to disk...");
             FileWriter writer = new FileWriter(profilesFile);
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(profiles));
             writer.flush();

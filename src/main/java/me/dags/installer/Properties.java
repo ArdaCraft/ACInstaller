@@ -38,7 +38,7 @@ public class Properties {
 
         @Override
         public String toString() {
-            return "api='" + api + "',repository='" + repo + "'";
+            return "api='" + api + "',user='" + user + "',repository='" + repo + "'";
         }
     }
 }

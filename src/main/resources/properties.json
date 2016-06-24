@@ -1,6 +1,6 @@
 {
   "title": "ArdaCraft Installer",
-  "profile_name": "ACModpack",
+  "profile_name": "ArdaCraft-1.8.9",
   "target_dir": "profiles",
   "minecraft_version": "1.8.9",
   "github": {

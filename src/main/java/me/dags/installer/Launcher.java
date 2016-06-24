@@ -1,9 +1,9 @@
 package me.dags.installer;
 
 import com.google.gson.Gson;
-import me.dags.installer.component.ImageResource;
+import me.dags.installer.ui.ImageResource;
+import me.dags.installer.ui.InstallerPanel;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
