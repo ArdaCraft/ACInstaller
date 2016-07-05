@@ -41,9 +41,9 @@ public class InstallerPanel extends JPanel {
 
         try {
             int random = new Random().nextInt(3);
-            ImageLayer background = new ImageLayer("/installer-banner-" + random + ".jpg", 0.07).scale(1.05).setCover(true);
-            ImageLayer icon = new ImageLayer("/installer-icon.png", 0.1).scale(0.7).margins(-20, 0);
-            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.13).scale(0.65).margins(50, 10);
+            ImageLayer background = new ImageLayer("/installer-banner-" + random + ".jpg", 0.1).scale(1.05).setCover(true);
+            ImageLayer icon = new ImageLayer("/installer-icon.png", 0.05).scale(0.7).margins(-20, 0);
+            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.05).scale(0.65).margins(50, 10);
 
             ParallaxLayers banner = new ParallaxLayers();
             banner.setPreferredSize(new Dimension(windowWidth, 260));
