@@ -2,6 +2,7 @@ package me.dags.installer.ui;
 
 import javafx.util.Pair;
 import me.dags.installer.Installer;
+import me.dags.installer.Tooltips;
 import me.dags.installer.Versions;
 import me.dags.installer.task.ForgeInstall;
 import me.dags.installer.task.ModpackInstall;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Random;
 
 /**
  * @author dags <dags@dags.me>
@@ -38,9 +40,10 @@ public class InstallerPanel extends JPanel {
         this.installDir = new File(Installer.properties().mcDir, "profiles");
 
         try {
-            ImageLayer background = new ImageLayer("/installer-banner.png", 0.1).scale(1.05).setCover(true);
+            int random = new Random().nextInt(3);
+            ImageLayer background = new ImageLayer("/installer-banner-" + random + ".jpg", 0.1).scale(1.05).setCover(true);
             ImageLayer icon = new ImageLayer("/installer-icon.png", 0.15).scale(0.7).margins(-40, 0);
-            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.175).scale(0.6).margins(40, 20);
+            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.175).scale(0.6).margins(40, 10);
 
             ParallaxLayers banner = new ParallaxLayers();
             banner.setPreferredSize(new Dimension(windowWidth, 260));
@@ -54,29 +57,32 @@ public class InstallerPanel extends JPanel {
         }
 
         forgeVersions.setPreferredSize(new Dimension(windowWidth - (buttonWidth * 2), rowHeight));
-        forgeVersions.setToolTipText("Select a Forge installation to extend");
+        forgeVersions.setToolTipText(Tooltips.FORGE_VERSION);
         forgeInstall.setPreferredSize(new Dimension((buttonWidth * 2), rowHeight));
-        forgeInstall.setToolTipText("Download and launch the recommended Forge installer");
+        forgeInstall.setToolTipText(Tooltips.FORGE_INSTALL);
         forgeInstall.addActionListener(e -> new Thread(new ForgeInstall(this)).start());
 
         targetDir.setPreferredSize(new Dimension(windowWidth - (buttonWidth * 2), rowHeight));
         targetDir.setText(installDir.getAbsolutePath());
         targetSelect.setPreferredSize(new Dimension((buttonWidth * 2), rowHeight));
-        targetSelect.setToolTipText("Select where to install/extract the modpack files to");
+        targetSelect.setToolTipText(Tooltips.INSTALL_DIR);
         targetSelect.addActionListener(fileSelection());
 
         install.setSelected(true);
         install.addActionListener(radioInverter(install, extract));
-        install.setToolTipText("Extract the modpack to the target directory and add a new profile to the Vanilla launcher");
+        install.setToolTipText(Tooltips.INSTALL_OPT);
         extract.setSelected(false);
         extract.addActionListener(radioInverter(extract, install));
-        extract.setToolTipText("Extract the modpack to the target directory");
+        extract.setToolTipText(Tooltips.EXTRACT_OPT);
 
         run.setPreferredSize(new Dimension(buttonWidth, rowHeight));
         run.setEnabled(false);
         run.addActionListener(e -> new Thread(new ModpackInstall(this)).start());
         close.setPreferredSize(new Dimension(buttonWidth, rowHeight));
         close.addActionListener(e -> System.exit(0));
+
+        ToolTipManager.sharedInstance().setInitialDelay(1);
+        ToolTipManager.sharedInstance().setDismissDelay(10000);
 
         this.add(toRow(forgeVersions, forgeInstall));
         this.add(toRow(targetDir, targetSelect));
@@ -107,12 +113,10 @@ public class InstallerPanel extends JPanel {
         forgeVersions.removeAllItems();
         Collection<String> versions = new Versions().getVersions();
         if (versions.isEmpty()) {
-            forgeInstall.setEnabled(true);
             forgeVersions.setEnabled(false);
             forgeVersions.addItem("No Forge installation detected");
         } else {
             forgeVersions.setEnabled(true);
-            forgeInstall.setEnabled(false);
             versions.forEach(forgeVersions::addItem);
         }
         updateInstallMode();

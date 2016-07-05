@@ -37,6 +37,7 @@ public class ParallaxLayers extends JPanel implements MouseMotionListener, Mouse
             state = 0;
             mouseX = this.getWidth() / 2;
             mouseY = this.getHeight() / 2;
+            repaint();
             return;
         }
 

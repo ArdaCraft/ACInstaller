@@ -1,5 +1,7 @@
 package me.dags.installer.ui;
 
+import me.dags.installer.Launcher;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,7 +25,7 @@ public class ImageLayer {
     private int marginLeft = 0;
 
     public ImageLayer(String path) throws IOException {
-        bufferedImage = ImageIO.read(ImageLayer.class.getResource(path));
+        bufferedImage = ImageIO.read(Launcher.class.getResource(path));
         instance = bufferedImage;
         currentWidth = bufferedImage.getWidth();
         currentHeight = bufferedImage.getHeight();
@@ -31,7 +33,7 @@ public class ImageLayer {
     }
 
     public ImageLayer(String path, double fact) throws IOException {
-        bufferedImage = ImageIO.read(ImageLayer.class.getResource(path));
+        bufferedImage = ImageIO.read(Launcher.class.getResource(path));
         instance = bufferedImage;
         currentWidth = bufferedImage.getWidth();
         currentHeight = bufferedImage.getHeight();
