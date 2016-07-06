@@ -11,11 +11,19 @@ import me.dags.installer.task.ModpackInstall;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * @author dags <dags@dags.me>
@@ -56,7 +64,7 @@ public class InstallerPanel extends JPanel {
                 banner.addLayer(logo);
                 this.add(banner);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -195,16 +203,14 @@ public class InstallerPanel extends JPanel {
         return row;
     }
 
-    private static List<String> scanBackgrounds() throws IOException {
-        List<String> backgrounds = new ArrayList<>();
-        InputStream inputStream = Launcher.class.getResourceAsStream("/backgrounds");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String name;
-        while ((name = reader.readLine()) != null) {
-            backgrounds.add(name);
+    private static List<String> scanBackgrounds() throws IOException, URISyntaxException {
+        Path path;
+        URI uri = Launcher.class.getResource("/backgrounds").toURI();
+        if (uri.getScheme().equals("jar")) {
+            path = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath("/backgrounds");
+        } else {
+            path = Paths.get(uri);
         }
-        reader.close();
-        inputStream.close();
-        return backgrounds;
+        return Files.walk(path, 1).filter(Files::isRegularFile).map(p -> p.getFileName().toString()).collect(Collectors.toList());
     }
 }
