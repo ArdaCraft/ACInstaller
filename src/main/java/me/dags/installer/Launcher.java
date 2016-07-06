@@ -9,6 +9,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -34,7 +35,6 @@ public class Launcher {
         } else {
             mcDir = new File(userHome, mcDirName);
         }
-        //
 
         Installer.properties().mcDir = mcDir;
         Installer.logMessage("Set minecraft home dir to {}", mcDir);
@@ -42,7 +42,6 @@ public class Launcher {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             JFrame frame = new JFrame();
-            frame.setIconImage(new ImageLayer("/installer-icon.png").resize(64, 64));
             frame.setTitle(properties.title);
             frame.setLayout(new GridBagLayout());
             frame.add(new InstallerPanel());
@@ -51,6 +50,7 @@ public class Launcher {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            frame.setIconImages(Arrays.asList(new ImageLayer("/icon_128.png").resize(64, 64), new ImageLayer("/icon_32.png").resize(16, 16)));
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package me.dags.installer.ui;
 
 import javafx.util.Pair;
 import me.dags.installer.Installer;
+import me.dags.installer.Launcher;
 import me.dags.installer.Tooltips;
 import me.dags.installer.Versions;
 import me.dags.installer.task.ForgeInstall;
@@ -10,9 +11,10 @@ import me.dags.installer.task.ModpackInstall;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -40,18 +42,20 @@ public class InstallerPanel extends JPanel {
         this.installDir = new File(Installer.properties().mcDir, "profiles");
 
         try {
-            int random = new Random().nextInt(3);
-            ImageLayer background = new ImageLayer("/installer-banner-" + random + ".jpg", 0.1).scale(1.05).setCover(true);
-            ImageLayer icon = new ImageLayer("/installer-icon.png", 0.05).scale(0.7).margins(-20, 0);
-            ImageLayer logo = new ImageLayer("/installer-logo.png", 0.05).scale(0.65).margins(50, 10);
+            List<String> backgrounds = scanBackgrounds();
+            if (backgrounds.size() > 0) {
+                String name = backgrounds.get(new Random().nextInt(backgrounds.size()));
+                ImageLayer background = new ImageLayer("/backgrounds/" + name, 0.1).scale(1.05).setCover(true);
+                ImageLayer icon = new ImageLayer("/icon_128.png", 0.05).scale(0.7).margins(-20, 0);
+                ImageLayer logo = new ImageLayer("/ac-text.png", 0.05).scale(0.65).margins(50, 10);
 
-            ParallaxLayers banner = new ParallaxLayers();
-            banner.setPreferredSize(new Dimension(windowWidth, 260));
-            banner.addLayer(background);
-            banner.addLayer(icon);
-            banner.addLayer(logo);
-
-            this.add(banner);
+                ParallaxLayers banner = new ParallaxLayers();
+                banner.setPreferredSize(new Dimension(windowWidth, 260));
+                banner.addLayer(background);
+                banner.addLayer(icon);
+                banner.addLayer(logo);
+                this.add(banner);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -189,5 +193,18 @@ public class InstallerPanel extends JPanel {
             row.add(c);
         }
         return row;
+    }
+
+    private static List<String> scanBackgrounds() throws IOException {
+        List<String> backgrounds = new ArrayList<>();
+        InputStream inputStream = Launcher.class.getResourceAsStream("/backgrounds");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String name;
+        while ((name = reader.readLine()) != null) {
+            backgrounds.add(name);
+        }
+        reader.close();
+        inputStream.close();
+        return backgrounds;
     }
 }
