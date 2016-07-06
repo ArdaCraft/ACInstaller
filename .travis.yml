@@ -6,8 +6,17 @@ script:
 deploy:
   provider: releases
   api_key: '$GITHUB_API_KEY'
-  file: "target/*.jar"
+  file: "target/ACInstaller*.jar"
   file_glob: true
   skip_cleanup: true
   on:
-    tags: true
+    branch: master
+notifications:
+  email: false
+after_success:
+  - artefact="$(basename target/ACInstaller*.jar .jar)"
+  - tag="$(cut -d '-' -f 2- <<< $artefact)"
+  - git config --global user.name "Travis CI"
+  - export GIT_TAG=$tag-$TRAVIS_BUILD_NUMBER
+  - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
+  - git push origin $GIT_TAG
