@@ -22,6 +22,7 @@ public class Launcher {
         Properties properties = new Gson().fromJson(new InputStreamReader(inputStream), Properties.class);
         Installer.applyProperties(properties);
         Installer.phase("startup").log("Loaded properties: {}", properties);
+        Installer.logMessage("Java home: {}", System.getProperty("java.home"));
 
         // Liteloader Installer
         String userHome = System.getProperty("user.home", ".");
